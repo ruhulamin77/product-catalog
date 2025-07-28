@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 
 async function getProducts() {
@@ -16,11 +17,11 @@ export default async function AllProductsPage() {
           <img src={p.image} className="h-32 object-contain mx-auto" />
           <h2 className="font-semibold">{p.title}</h2>
           <p>${p.price}</p>
-          <a href={`/products/${p.id}`}>
+          <Link href={`/products/${p.id}`}>
             <button className="bg-blue-500 text-white px-4 py-1 mt-2">
               View Details
             </button>
-          </a>
+          </Link>
         </div>
       ))}
     </div>
