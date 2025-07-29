@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -12,7 +13,8 @@ export async function generateStaticParams() {
 }
 
 export default async function ProductDetailsPage({ params }) {
-  const res = await fetch(`https://fakestoreapi.com/products/${params.id}`);
+  const { id } = await params;
+  const res = await fetch(`https://fakestoreapi.com/products/${id}`);
 
   if (!res.ok) {
     notFound();
@@ -21,7 +23,12 @@ export default async function ProductDetailsPage({ params }) {
 
   return (
     <div className="p-8">
-      <img src={product.image} className="h-48 mx-auto" />
+      <Image
+        src={product.image}
+        className="max-w-64 mx-auto"
+        height={700}
+        width={400}
+      />
       <h1 className="text-2xl font-bold">{product.title}</h1>
       <p className="my-4">{product.description}</p>
       <p className="font-semibold">${product.price}</p>
