@@ -1,14 +1,19 @@
 'use client';
-import { useAuthStore } from '@/store/authStore';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/store/authStore';
 
 export default function Header() {
-  const token = useAuthStore((state) => state.token);
-  const logout = useAuthStore((state) => state.logout);
   const router = useRouter();
+  const { isLoggedIn, checkAuth, logout } = useAuthStore();
+  const [loading, setLoading] = useState(true);
 
-  const handleLogout = () => {
-    logout();
+  useEffect(() => {
+    checkAuth().finally(() => setLoading(false));
+  }, [checkAuth]);
+
+  const handleLogout = async () => {
+    await logout();
     router.push('/');
   };
 
@@ -20,8 +25,9 @@ export default function Header() {
       >
         Product Catalog
       </div>
+
       <div>
-        {token ? (
+        {isLoggedIn ? (
           <button
             onClick={handleLogout}
             className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"

@@ -1,17 +1,22 @@
 import { create } from 'zustand';
 
 export const useAuthStore = create((set) => ({
-  token: typeof window !== 'undefined' ? localStorage.getItem('token') : null,
-  user: null,
+  isLoggedIn: false,
 
-  login: (token, user) => {
-    console.log('token', user);
-    localStorage.setItem('token', token);
-    set({ token, user });
+  checkAuth: async () => {
+    try {
+      const res = await fetch('/api/me', { credentials: 'include' });
+      set({ isLoggedIn: res.ok });
+    } catch {
+      set({ isLoggedIn: false });
+    }
   },
 
-  logout: () => {
-    localStorage.removeItem('token');
-    set({ token: null, user: null });
+  logout: async () => {
+    await fetch('/api/logout', {
+      method: 'POST',
+      credentials: 'include',
+    });
+    set({ isLoggedIn: false });
   },
 }));

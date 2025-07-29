@@ -1,13 +1,24 @@
-import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
 
-export async function POST() {
+export async function POST(request) {
   const { email, password } = await request.json();
 
-  const cookieStore = await cookies();
-  cookieStore.set('token', 'mock-auth-token', {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    path: '/',
-    maxAge: 60 * 60, // 1 hour
-  });
+  // Dummy login
+  if (email === 'test@test.com' && password === '123456') {
+    const fakeToken = 'FAKE_JWT_TOKEN';
+
+    const response = NextResponse.json({ success: true });
+    response.cookies.set('token', fakeToken, {
+      httpOnly: true,
+      path: '/',
+      maxAge: 60 * 60, // 1 hour
+    });
+
+    return response;
+  }
+
+  return NextResponse.json(
+    { success: false, message: 'Invalid credentials' },
+    { status: 401 }
+  );
 }

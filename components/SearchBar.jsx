@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 export default function SearchBar({ onSearch }) {
   const [query, setQuery] = useState('');
 
+  // Debounce
   useEffect(() => {
     const delay = setTimeout(() => onSearch(query), 300);
     return () => clearTimeout(delay);

@@ -1,58 +1,67 @@
-'use client';
-import { useAuthStore } from '@/store/authStore';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
-export default function ProductDetailsPage({ params }) {
+export default async function ProductDetailsPage({ params }) {
   const { id } = params;
-  const token = useAuthStore((state) => state.token);
-  const router = useRouter();
-  const [product, setProduct] = useState(null);
 
-  // Redirect if not logged in
-  useEffect(() => {
-    if (!token) {
-      router.push(`/login?redirect=/products/${id}`);
-    }
-  }, [token, id]);
+  const res = await fetch(`https://fakestoreapi.com/products/${id}`, {
+    cache: 'no-store',
+  });
 
-  // Fetch product
-  useEffect(() => {
-    async function fetchProduct() {
-      try {
-        const res = await fetch(`https://fakestoreapi.com/products/${id}`);
-        if (!res.ok) throw new Error('Product not found!');
-        const data = await res.json();
-        setProduct(data);
-      } catch (error) {
-        console.error(error);
-      }
-    }
+  if (!res.ok) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="bg-white shadow-lg rounded-xl p-8 text-center">
+          <h1 className="text-2xl font-bold text-red-500 mb-2">
+            Product Not Found
+          </h1>
+          <Link href="/" className="text-blue-600 hover:underline">
+            Back to Home
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
-    if (token) fetchProduct();
-  }, [id, token]);
-
-  if (!token) return null; // Prevent flash
-
-  if (!product) return <div className="p-8">Loading product...</div>;
+  const product = await res.json();
 
   return (
-    <div className="p-8">
-      <Image
-        src={product.image}
-        className="max-w-64 mx-auto"
-        height={400}
-        width={300}
-        alt={product.title}
-      />
-      <h1 className="text-2xl font-bold">{product.title}</h1>
-      <p className="my-4">{product.description}</p>
-      <p className="font-semibold">${product.price}</p>
-      <Link href="/">
-        <button className="mt-4 px-4 py-2 bg-gray-300">Back to Home</button>
-      </Link>
+    <div className="min-h-screen bg-gray-50 py-10 px-4 flex items-center justify-center">
+      <div className="max-w-3xl w-full bg-white rounded-2xl shadow-lg p-8 grid md:grid-cols-2 gap-8">
+        {/* Product Image */}
+        <div className="flex items-center justify-center">
+          <Image
+            src={product.image}
+            className="object-contain max-h-[350px]"
+            height={400}
+            width={350}
+            alt={product.title}
+          />
+        </div>
+
+        {/* Product Info */}
+        <div className="flex flex-col justify-between">
+          <div>
+            <h1 className="text-2xl font-bold mb-3">{product.title}</h1>
+            <p className="text-gray-600 mb-4">{product.description}</p>
+            <p className="text-xl font-semibold text-green-600 mb-6">
+              ${product.price}
+            </p>
+          </div>
+
+          <div className="flex gap-3 mt-4">
+            <Link
+              href="/"
+              className="px-5 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition"
+            >
+              Back to Home
+            </Link>
+            <button className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
