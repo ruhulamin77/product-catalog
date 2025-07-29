@@ -1,5 +1,5 @@
 'use client';
 
 export default function error({ error }) {
-  return <div>error: {error.message}</div>;
+  return <div>Something went wrong!</div>;
 }

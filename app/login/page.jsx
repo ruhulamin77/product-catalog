@@ -4,8 +4,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('test@test.com');
+  const [password, setPassword] = useState('123456');
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/';
@@ -15,15 +15,12 @@ export default function LoginPage() {
   const handleLogin = (e) => {
     e.preventDefault();
     if (email === 'test@test.com' && password === '123456') {
-      login('mock-token');
-      document.cookie = 'token=mock-token; path=/';
+      login('mock-token', email);
       router.push(redirectTo);
     } else {
       alert('Invalid credentials');
     }
   };
-
-  console.log({ token });
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-blue-100 to-blue-200">
