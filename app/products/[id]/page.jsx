@@ -12,13 +12,12 @@ export async function generateStaticParams() {
 }
 
 export default async function ProductDetailsPage({ params }) {
-  let product;
-  try {
-    const res = await fetch(`https://fakestoreapi.com/products/${params.id}`);
-    product = await res.json();
-  } catch (error) {
+  const res = await fetch(`https://fakestoreapi.com/products/${params.id}`);
+
+  if (!res.ok) {
     notFound();
   }
+  const product = await res.json();
 
   return (
     <div className="p-8">
