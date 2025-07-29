@@ -14,9 +14,9 @@ export default function ProductDetailsPage({ params }) {
   // Redirect if not logged in
   useEffect(() => {
     if (!token) {
-      router.push('/login');
+      router.push(`/login?redirect=/products/${id}`);
     }
-  }, [token]);
+  }, [token, id]);
 
   // Fetch product
   useEffect(() => {
@@ -43,8 +43,8 @@ export default function ProductDetailsPage({ params }) {
       <Image
         src={product.image}
         className="max-w-64 mx-auto"
-        height={700}
-        width={400}
+        height={400}
+        width={300}
         alt={product.title}
       />
       <h1 className="text-2xl font-bold">{product.title}</h1>

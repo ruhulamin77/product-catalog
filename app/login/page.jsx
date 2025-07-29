@@ -1,7 +1,7 @@
 'use client';
-import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('test@test.com');
@@ -10,15 +10,16 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/';
   const login = useAuthStore((state) => state.login);
-  const token = useAuthStore((state) => state.token);
 
   const handleLogin = (e) => {
     e.preventDefault();
     if (email === 'test@test.com' && password === '123456') {
-      login('mock-token', email);
+      const fakeToken = 'FAKE_JWT_TOKEN';
+      const fakeUser = { name: 'Test User', email };
+      login(fakeToken, fakeUser);
       router.push(redirectTo);
     } else {
-      alert('Invalid credentials');
+      alert('Invalid credentials! try email: test@test.com  pass: 123456');
     }
   };
 
