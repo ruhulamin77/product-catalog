@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export default async function ProductDetailsPage({ params }) {
-  const { id } = params;
+  const { id } = await params;
 
   const res = await fetch(`https://fakestoreapi.com/products/${id}`, {
     cache: 'no-store',
