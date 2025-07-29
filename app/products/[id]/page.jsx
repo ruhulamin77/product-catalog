@@ -1,35 +1,51 @@
+'use client';
+import { useAuthStore } from '@/store/authStore';
 import Image from 'next/image';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-export const dynamicParams = true; // fallback data if dynamic id not found in the static pages
-export const revalidate = 60;
+export default function ProductDetailsPage({ params }) {
+  const { id } = params;
+  const token = useAuthStore((state) => state.token);
+  const router = useRouter();
+  const [product, setProduct] = useState(null);
 
-// generate static params for all the products
-export async function generateStaticParams() {
-  const res = await fetch('https://fakestoreapi.com/products');
-  const products = await res.json();
-  return products.map((p) => ({ id: p.id.toString() }));
-}
+  // Redirect if not logged in
+  useEffect(() => {
+    if (!token) {
+      router.push('/login');
+    }
+  }, [token]);
 
-export default async function ProductDetailsPage({ params }) {
-  const { id } = await params;
-  const res = await fetch(`https://fakestoreapi.com/products/${id}`);
+  // Fetch product
+  useEffect(() => {
+    async function fetchProduct() {
+      try {
+        const res = await fetch(`https://fakestoreapi.com/products/${id}`);
+        if (!res.ok) throw new Error('Product not found!');
+        const data = await res.json();
+        setProduct(data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
 
-  if (!res.ok) {
-    throw new Error('Product not found!');
-  }
+    if (token) fetchProduct();
+  }, [id, token]);
 
-  const product = await res.json();
+  if (!token) return null; // Prevent flash
+
+  if (!product) return <div className="p-8">Loading product...</div>;
 
   return (
     <div className="p-8">
       <Image
-        src={product?.image}
+        src={product.image}
         className="max-w-64 mx-auto"
         height={700}
         width={400}
-        alt={product?.title}
+        alt={product.title}
       />
       <h1 className="text-2xl font-bold">{product.title}</h1>
       <p className="my-4">{product.description}</p>
