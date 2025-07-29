@@ -16,6 +16,8 @@ export default function LoginPage() {
     e.preventDefault();
     if (email === 'test@test.com' && password === '123456') {
       login('mock-token');
+      document.cookie = 'token=mock-token; path=/';
+      router.push(redirectTo);
     } else {
       alert('Invalid credentials');
     }
