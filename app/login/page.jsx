@@ -1,14 +1,27 @@
 'use client';
 import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useAuthStore } from '@/store/authStore';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get('redirect') || '/';
+  const login = useAuthStore((state) => state.login);
+  const token = useAuthStore((state) => state.token);
 
   const handleLogin = (e) => {
     e.preventDefault();
-    console.log(email, password);
+    if (email === 'test@test.com' && password === '123456') {
+      login('mock-token');
+    } else {
+      alert('Invalid credentials');
+    }
   };
+
+  console.log({ token });
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-blue-100 to-blue-200">
