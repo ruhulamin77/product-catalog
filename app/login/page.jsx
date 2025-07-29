@@ -1,9 +1,9 @@
 'use client';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 
-export default function LoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
@@ -31,25 +31,33 @@ export default function LoginPage() {
       <input
         type="email"
         placeholder="Email"
-        className="border p-2"
+        className="border p-2 rounded"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
       <input
         type="password"
         placeholder="Password"
-        className="border p-2"
+        className="border p-2 rounded"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <p className="p-0">Test Email: test@test.com</p>
-      <p className="p-0">Test Password: 123456</p>
+      <p className="text-sm text-gray-600">Test Email: test@test.com</p>
+      <p className="text-sm text-gray-600">Test Password: 123456</p>
       <button
         onClick={handleLogin}
-        className="bg-blue-500 text-white p-2 rounded"
+        className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition-colors"
       >
         Login
       </button>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginForm />
+    </Suspense>
   );
 }
